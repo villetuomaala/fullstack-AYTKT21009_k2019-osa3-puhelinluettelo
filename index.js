@@ -33,8 +33,14 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/api/info', (request, response) => {
-  console.log(request)
   response.send(`<p>This phonebook has ${data.length} persons.</p><p>${new Date()}</p>`)
+})
+
+app.get('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
+  const person = data.find(d => d.id === id)
+
+  person ? response.json(person) : response.status(404).end()
 })
 
 const PORT = 3001
