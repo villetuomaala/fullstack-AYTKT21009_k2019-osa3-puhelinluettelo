@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 
-const data = [
+let data = [
   {
     id: 1,
     name: "Ville Tuomaala",
@@ -41,6 +41,12 @@ app.get('/api/persons/:id', (request, response) => {
   const person = data.find(d => d.id === id)
 
   person ? response.json(person) : response.status(404).end()
+})
+
+app.delete('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
+  data = data.filter(d => d.id != id)
+  response.status(204).end()
 })
 
 const PORT = 3001
