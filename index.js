@@ -1,6 +1,8 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 
 const app = express()
 morgan.token('data', (req, res) => JSON.stringify(req.body))
@@ -43,7 +45,7 @@ const getId = () => Math.floor(Math.random() * Math.floor(1000000000))
 
 
 app.get('/api/persons', (request, response) => {
-  response.json(data)
+  Person.find({}).then(p => response.json(p))
 })
 
 app.get('/api/info', (request, response) => {
