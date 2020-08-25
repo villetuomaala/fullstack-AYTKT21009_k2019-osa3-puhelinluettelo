@@ -45,18 +45,19 @@ const getId = () => Math.floor(Math.random() * Math.floor(1000000000))
 
 
 app.get('/api/persons', (request, response) => {
-  Person.find({}).then(p => response.json(p))
+  Person.find({}).then(person => response.json(person))
 })
 
 app.get('/api/info', (request, response) => {
-  response.send(`<p>This phonebook has ${data.length} persons.</p><p>${new Date()}</p>`)
+  Person.find({}).then(person => {
+    response.send(`<p>This phonebook has ${person.length} persons.</p><p>${new Date()}</p>`)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = data.find(d => d.id === id)
-
-  person ? response.json(person) : response.status(404).end()
+  Person.findById(request.params.id).then(person => {
+    person ? response.json(person) : response.status(404).end()
+  })  
 })
 
 app.delete('/api/persons/:id', (request, response) => {
