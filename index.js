@@ -9,63 +9,45 @@ morgan.token('data', (req, res) => JSON.stringify(req.body))
 
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data')) 
-
 app.use(cors())
-
 app.use(express.static('build'))
-
-let data = [
-  {
-    id: 1,
-    name: "Ville Tuomaala",
-    number: "9",
-    display: true
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-    display: true
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-    display: true
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "12-43-768875",
-    display: true
-  }
-]
 
 const getId = () => Math.floor(Math.random() * Math.floor(1000000000))
 
 
-app.get('/api/persons', (request, response) => {
-  Person.find({}).then(person => response.json(person))
+app.get('/api/persons', (request, response, next) => {
+  Person.find({})
+    .then(person => response.json(person))
+    .catch(error => next(error))
 })
 
-app.get('/api/info', (request, response) => {
-  Person.find({}).then(person => {
-    response.send(`<p>This phonebook has ${person.length} persons.</p><p>${new Date()}</p>`)
-  })
+
+app.get('/api/info', (request, response, next) => {
+  Person.find({})
+    .then(person => {
+      response.send(`<p>This phonebook has ${person.length} persons.</p><p>${new Date()}</p>`)
+    })
+    .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  Person.findById(request.params.id).then(person => {
-    person ? response.json(person) : response.status(404).end()
-  })  
+
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      person ? response.json(person) : response.status(404).end()
+    })
+    .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
     .then(result => response.status(204).end())
+    .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name) return response.status(400).json({ error: "Name missing" }) 
@@ -77,8 +59,20 @@ app.post('/api/persons', (request, response) => {
     display: body.display ? body.display : true
   })
 
-  person.save().then(p => { response.json(p)} ) 
+  person.save()
+    .then(p => { response.json(p) })
+    .catch(error => next(error))
 })
+
+
+const errorHandler = (error, request, response, next) => {
+  console.log(error.message)
+  if (error.name === 'CastError') response.status(400).send({ error: 'malformed id' })
+  
+  next(error)
+}
+app.use(errorHandler)
+
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
