@@ -14,7 +14,7 @@ const url = `mongodb+srv://fullstack:${args.dbPassword}@cluster0.eyevj.mongodb.n
 
 mongoose.connect(url, { useNewUrlParser: true,  useUnifiedTopology: true })
   .catch(error => {
-    console.log(`Error connecting to MongoDB: ${error}`);
+    console.log(`Error connecting to MongoDB: ${error}`)
   })
 
 const personSchema = new mongoose.Schema({
@@ -47,7 +47,7 @@ if (!args.personName && !args.personNumber) {
 
   person.save()
     .then(result => {
-      console.log(`added ${result.name} number ${result.number} to phonebook`);
+      console.log(`added ${result.name} number ${result.number} to phonebook`)
       mongoose.connection.close()
     })
     .catch(error => {

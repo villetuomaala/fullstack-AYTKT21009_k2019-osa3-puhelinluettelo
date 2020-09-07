@@ -9,7 +9,8 @@
     "build:ui": "rm -rf build && cd ../fullstack-AYTKT21009_k2019/osa2/puhelinluettelo && npm run build --prod && cp -r build ../../../fullstack-AYTKT21009_k2019-osa3/",
     "deploy": "git push heroku master",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,7 @@
     "@types/dotenv": "^8.2.0",
     "@types/mongoose": "^5.7.36",
     "@types/node": "^14.6.0",
+    "eslint": "^7.8.1",
     "nodemon": "^2.0.2"
   }
 }

@@ -5,14 +5,12 @@ const cors = require('cors')
 const Person = require('./models/person')
 
 const app = express()
-morgan.token('data', (req, res) => JSON.stringify(req.body))
+morgan.token('data', (req) => JSON.stringify(req.body))
 
 app.use(express.json())
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data')) 
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
 app.use(cors())
 app.use(express.static('build'))
-
-const getId = () => Math.floor(Math.random() * Math.floor(1000000000))
 
 
 app.get('/api/persons', (request, response, next) => {
@@ -42,7 +40,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then(result => response.status(204).end())
+    .then(() => response.status(204).end())
     .catch(error => next(error))
 })
 
@@ -50,8 +48,8 @@ app.delete('/api/persons/:id', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
-  if (!body.name) return response.status(400).json({ error: "Name missing" }) 
-  if (!body.number) return response.status(400).json({ error: "Number missing" }) 
+  if (!body.name) return response.status(400).json({ error: 'Name missing' })
+  if (!body.number) return response.status(400).json({ error: 'Number missing' })
 
   const person = new Person({
     number: body.number,
@@ -79,14 +77,14 @@ app.put('/api/persons/:id', (request, response, next) => {
       response.json(person)
     })
     .catch(error => next(error))
-}) 
+})
 
 
 const errorHandler = (error, request, response, next) => {
   console.log(error.message)
   if (error.name === 'CastError') response.status(400).send({ error: 'malformed id' })
   if (error.name === 'ValidationError') response.status(400).send({ error: error.message })
-  
+
   next(error)
 }
 app.use(errorHandler)
